@@ -33,5 +33,21 @@ class ChaosRouter(consumer: ActorRef) extends Actor {
 }
 
 class ResequencerConsumer(actualConsumer: ActorRef) extends Actor {
+  val resequenced = scala.collection.mutable.Map[String, ResequencedMessages]()
 
+  def dispatchAllSequenced(correlationId: String) = {
+    val resequencedMessages = resequenced(correlationId)
+    var dispatchableIndex = resequencedMessages.dispatchableIndex
+
+    resequencedMessages.sequencedMessages.foreach { sequenceMessage =>
+      if (sequenceMessage.index == dispatchableIndex) {
+        actualConsumer ! sequenceMessage
+
+        dispatchableIndex += 1
+      }
+    }
+
+    resequenced(correlationId) =
+      resequencedMessages.advancedTo(dispatchableIndex)
+  }
 }
