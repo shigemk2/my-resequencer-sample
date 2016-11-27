@@ -2,5 +2,5 @@ package com.example
 
 import akka.actor._
 
-object ResequencerDriver {
+object ResequencerDriver extends CompletableApp(10) {
 }
