@@ -31,3 +31,7 @@ class ChaosRouter(consumer: ActorRef) extends Actor {
       println(s"ChaosRouter: received unexpected: $message")
   }
 }
+
+class ResequencerConsumer(actualConsumer: ActorRef) extends Actor {
+
+}
