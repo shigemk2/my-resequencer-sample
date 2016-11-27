@@ -19,7 +19,7 @@ object ResequencerDriver extends CompletableApp(10) {
 }
 
 class ChaosRouter(consumer: ActorRef) extends Actor {
-  val random = new Random((new Date()).getTime)
+  val random = new Random(new Date().getTime)
 
   def receive = {
     case sequencedMessage: SequencedMessage =>
