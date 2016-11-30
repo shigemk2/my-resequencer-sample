@@ -40,6 +40,7 @@ class ResequencerConsumer(actualConsumer: ActorRef) extends Actor {
     var dispatchableIndex = resequencedMessages.dispatchableIndex
 
     resequencedMessages.sequencedMessages.foreach { sequenceMessage =>
+
       if (sequenceMessage.index == dispatchableIndex) {
         actualConsumer ! sequenceMessage
 
