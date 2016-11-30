@@ -51,4 +51,12 @@ class ResequencerConsumer(actualConsumer: ActorRef) extends Actor {
     resequenced(correlationId) =
       resequencedMessages.advancedTo(dispatchableIndex)
   }
+
+  def dummySequencedMessages(count: Int): Seq[SequencedMessage] = {
+    for {
+      index <- 1 to count
+    } yield {
+      SequencedMessage("", -1, count)
+    }
+  }
 }
