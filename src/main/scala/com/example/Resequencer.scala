@@ -79,4 +79,13 @@ class ResequencerConsumer(actualConsumer: ActorRef) extends Actor {
       println(s"ResequencerConsumer: removed completed: $correlationId")
     }
   }
+
+  def resequence(sequencedMessage: SequencedMessage) = {
+    if (!resequenced.contains(sequencedMessage.correlationId)) {
+      resequenced(sequencedMessage.correlationId) =
+        ResequencedMessages(1, dummySequencedMessages(sequencedMessage.total).toArray)
+    }
+
+    resequenced(sequencedMessage.correlationId)
+  }
 }
