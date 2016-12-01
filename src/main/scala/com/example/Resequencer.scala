@@ -3,6 +3,7 @@ package com.example
 import java.util.concurrent.TimeUnit
 import java.util.{Date, Random}
 
+import akka.actor.Actor.Receive
 import akka.actor._
 
 import scala.concurrent.duration.Duration
@@ -58,5 +59,15 @@ class ResequencerConsumer(actualConsumer: ActorRef) extends Actor {
     } yield {
       SequencedMessage("", -1, count)
     }
+  }
+
+  override def receive: Receive = {
+    case unsequencedMessage: SequencedMessage =>
+      println(s"ResequencerConsumer: received: $unsequencedMessage")
+      resequenced(unsequencedMessage)
+      dispatchAllSequenced(unsequencedMessage.correlationId)
+      removeCompleted(unsequencedMessage.correlationId)
+    case message: Any =>
+      println(s"ResequencerConsumer: received unexpected: $message")
   }
 }
