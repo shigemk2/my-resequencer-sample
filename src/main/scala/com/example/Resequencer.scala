@@ -64,10 +64,19 @@ class ResequencerConsumer(actualConsumer: ActorRef) extends Actor {
   override def receive: Receive = {
     case unsequencedMessage: SequencedMessage =>
       println(s"ResequencerConsumer: received: $unsequencedMessage")
-      resequenced(unsequencedMessage)
+      resequence(unsequencedMessage)
       dispatchAllSequenced(unsequencedMessage.correlationId)
       removeCompleted(unsequencedMessage.correlationId)
     case message: Any =>
       println(s"ResequencerConsumer: received unexpected: $message")
+  }
+
+  def removeCompleted(correlationId: String) = {
+    val resequencedMessages = resequenced(correlationId)
+
+    if (resequencedMessages.dispatchableIndex > resequencedMessages.sequencedMessages(0).total) {
+      resequenced.remove(correlationId)
+      println(s"ResequencerConsumer: removed completed: $correlationId")
+    }
   }
 }
