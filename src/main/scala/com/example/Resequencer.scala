@@ -89,3 +89,12 @@ class ResequencerConsumer(actualConsumer: ActorRef) extends Actor {
     resequenced(sequencedMessage.correlationId)
   }
 }
+
+class SequencedMessageConsumer extends Actor {
+  def receive = {
+    case sequencedMessage: SequencedMessage =>
+      println(s"SequencedMessageConsumer: received: $sequencedMessage")
+      ResequencerDriver.completedStep()
+    case message: Any =>
+      println(s"SequencedMessageConsumer: received unexpected: $message")
+  }}
