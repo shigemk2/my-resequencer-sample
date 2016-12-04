@@ -17,6 +17,15 @@ case class ResequencedMessages(dispatchableIndex: Int, sequencedMessages: Array[
 }
 
 object ResequencerDriver extends CompletableApp(10) {
+  val sequencedMessageConsumer = system.actorOf(Props[SequencedMessageConsumer], "sequencedMessageConsumer")
+  val resequencerConsumer = system.actorOf(Props(classOf[ResequencerConsumer], sequencedMessageConsumer), "resequencerConsumer")
+  val chaosRouter = system.actorOf(Props(classOf[ChaosRouter], resequencerConsumer), "chaosRouter")
+
+  for (index <- 1 to 5) chaosRouter ! SequencedMessage("ABC", index, 5)
+  for (index <- 1 to 5) chaosRouter ! SequencedMessage("XYZ", index, 5)
+
+  awaitCompletion
+  println("Resequencer: is completed.")
 }
 
 class ChaosRouter(consumer: ActorRef) extends Actor {
