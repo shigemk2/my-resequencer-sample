@@ -5,6 +5,7 @@ import java.util.{Date, Random}
 
 import akka.actor.Actor.Receive
 import akka.actor._
+import scala.concurrent.ExecutionContext.Implicits.global
 
 import scala.concurrent.duration.Duration
 
@@ -29,6 +30,7 @@ object ResequencerDriver extends CompletableApp(10) {
 }
 
 class ChaosRouter(consumer: ActorRef) extends Actor {
+
   val random = new Random(new Date().getTime)
 
   def receive = {
